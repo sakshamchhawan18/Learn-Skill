@@ -46,7 +46,7 @@ function herosection() {
         
     </div>
     <div className="flex-2 w-1/2 h-[30rem] bg-white">
-        <Image src={"/images/educate.jpg"} height={500} width={700} alt='Fuck off' />
+        <Image src={"/images/educate.png"} height={500} width={700} alt='Fuck off' />
     </div>
     </div>
   )
