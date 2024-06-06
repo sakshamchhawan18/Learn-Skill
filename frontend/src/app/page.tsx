@@ -3,6 +3,7 @@ import Footer  from "@/components/footer";
 import Herosection from "@/components/herosection";
 import { WobbleCardDemo } from "@/components/card";
 import { Coursesb } from "@/components/coursesb";
+import { Text } from "@/components/text";
 
 export default function Home() {
   return (
@@ -10,8 +11,9 @@ export default function Home() {
         <NavbarDemo />
         <Herosection />
         <WobbleCardDemo />
-      <Coursesb />
+        <Text />
         <Footer />
+        
     </main>
   );
 }
