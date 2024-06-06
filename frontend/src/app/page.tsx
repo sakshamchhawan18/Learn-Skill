@@ -2,6 +2,7 @@ import { NavbarDemo } from "@/components/navbar";
 import Footer  from "@/components/footer";
 import Herosection from "@/components/herosection";
 import { WobbleCardDemo } from "@/components/card";
+import { Coursesb } from "@/components/coursesb";
 
 export default function Home() {
   return (
@@ -9,6 +10,7 @@ export default function Home() {
         <NavbarDemo />
         <Herosection />
         <WobbleCardDemo />
+      <Coursesb />
         <Footer />
     </main>
   );
