@@ -3,6 +3,7 @@ import Footer  from "@/components/footer";
 import Herosection from "@/components/herosection";
 import { WobbleCard } from "@/ui/wobble-card";
 import { WobbleCardDemo } from "@/components/card";
+import { Coursesb } from "@/components/coursesb";
 
 export default function Home() {
   return (
@@ -10,6 +11,7 @@ export default function Home() {
         <NavbarDemo />
         <Herosection />
         <WobbleCardDemo />
+      <Coursesb />
         <Footer />
     </main>
   );
