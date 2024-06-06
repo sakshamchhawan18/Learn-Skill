@@ -1,7 +1,6 @@
 import { NavbarDemo } from "@/components/navbar";
 import Footer  from "@/components/footer";
 import Herosection from "@/components/herosection";
-import { WobbleCard } from "@/ui/wobble-card";
 import { WobbleCardDemo } from "@/components/card";
 
 export default function Home() {
