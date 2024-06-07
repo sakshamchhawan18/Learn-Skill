@@ -27,10 +27,10 @@ function Herosection() {
       <div className="h-[30rem] w-1/2 bg-gray-50 px-3 flex-1 rounded-tl-lg rounded-bl-lg p-4">
         <div className="flex flex-col items-left justify-center h-[20rem]">
           <TypewriterEffectSmooth words={words} />
-          <div className="w-1/2 flex md:flex-row space-y-4 md:space-y-0 space-x-0 md:space-x-4">
+          <div className="w-10/12 flex md:flex-row space-y-4 md:space-y-0 space-x-0 md:space-x-4">
             <div className="flex-1">
               <h2>
-                <p className="text-black dark:text-black-200 text-xl sm:text-base">
+                <p className="text-black dark:text-black-200 text-xl sm:text-base text-left text-balance text-base ">
                   Welcome to Learn Skills, your one-stop platform for mastering
                   in-demand skills and igniting your personal and professional
                   growth! We offer a comprehensive learning experience with a

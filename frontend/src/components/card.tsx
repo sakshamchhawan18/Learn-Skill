@@ -6,10 +6,10 @@ import { WobbleCard } from "../ui/wobble-card";
 export function WobbleCardDemo() {
   return (
     <div className=" w-full ">
-      <h1 className="relative z-10 text-lg md:text-7xl  bg-clip-text text-transparent bg-gradient-to-b from-neutral-200 to-neutral-600  text-center font-sans font-bold">
-          Why choose us 
+      <h1 className="mb-8 relative z-10 text-lg md:text-7xl  bg-clip-text text-transparent bg-gradient-to-b from-neutral-200 to-neutral-600  text-center font-sans font-bold">
+          Why choose us?
         </h1>
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 max-w-7xl mx-auto w-full h-[700px] mb-4">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 max-w-7xl mx-auto w-full h-[600px] mb-4">
       <WobbleCard
         containerClassName="col-span-2 lg:col-span-2 bg-pink-800 max-h-200px lg:max-h-200px"
         className=""
