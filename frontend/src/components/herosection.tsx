@@ -30,7 +30,7 @@ function Herosection() {
           <div className="w-10/12 flex md:flex-row space-y-4 md:space-y-0 space-x-0 md:space-x-4">
             <div className="flex-1">
               <h2>
-                <p className="text-black dark:text-black-200 text-xl sm:text-base">
+                <p className="text-white dark:text-black-200 text-xl sm:text-base">
                   Welcome to Learn Skills, your one-stop platform for mastering
                   in-demand skills and igniting your personal and professional
                   growth! We offer a comprehensive learning experience with a
