@@ -24,13 +24,13 @@ function Herosection() {
 
   return (
     <div className="flex mb-4">
-      <div className="h-[30rem] w-1/2 bg-gray-50 px-3 flex-1 rounded-tl-lg rounded-bl-lg p-4">
+      <div className="h-[30rem] w-1/2 bg-black-50 px-3 flex-1 rounded-tl-lg rounded-bl-lg p-4">
         <div className="flex flex-col items-left justify-center h-[20rem]">
           <TypewriterEffectSmooth words={words} />
           <div className="w-10/12 flex md:flex-row space-y-4 md:space-y-0 space-x-0 md:space-x-4">
             <div className="flex-1">
               <h2>
-                <p className="text-black dark:text-black-200 text-xl sm:text-base text-left text-balance text-base ">
+                <p className="text-black dark:text-black-200 text-xl sm:text-base">
                   Welcome to Learn Skills, your one-stop platform for mastering
                   in-demand skills and igniting your personal and professional
                   growth! We offer a comprehensive learning experience with a
@@ -52,7 +52,7 @@ function Herosection() {
           </div>
         </div>
       </div>
-      <div className="flex-2 w-1/2 h-[30rem] bg-white rounded-tr-lg rounded-br-lg">
+      <div className="flex-2 w-1/2 h-[30rem]  rounded-tr-lg rounded-br-lg">
         <Image
           src={"/images/educate.png"}
           height={300}
