@@ -1,14 +1,11 @@
 "use client";
+
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import React, { useState } from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { cn } from "@/utils/cn";
-import {
-  IconBrandGithub,
-  IconBrandGoogle,
-  IconBrandOnlyfans,
-} from "@tabler/icons-react";
+import { IconBrandGithub, IconBrandGoogle } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import { auth } from "@/firebase/firebase";
 
@@ -22,6 +19,7 @@ export function SignupFormDemo() {
   const [createUserWithEmailAndPassword, user, loading, error] =
     useCreateUserWithEmailAndPassword(auth);
   const router = useRouter();
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
@@ -29,9 +27,11 @@ export function SignupFormDemo() {
         inputs.email,
         inputs.password
       );
-      if (!newUser) return;
-      router.push("/dashboard");
+      if (!newUser) {
+        router.push("/dashboard");
+      }
     } catch (error: any) {
+      console.error("Error creating user:", error.message);
       alert(error.message);
     }
   };
@@ -55,6 +55,7 @@ export function SignupFormDemo() {
               id="firstname"
               placeholder="Tyler"
               type="text"
+              value={inputs.firstname}
             />
           </LabelInputContainer>
           <LabelInputContainer>
@@ -64,6 +65,7 @@ export function SignupFormDemo() {
               id="lastname"
               placeholder="Durden"
               type="text"
+              value={inputs.lastname}
             />
           </LabelInputContainer>
         </div>
@@ -74,6 +76,7 @@ export function SignupFormDemo() {
             id="email"
             placeholder="projectmayhem@fc.com"
             type="email"
+            value={inputs.email}
           />
         </LabelInputContainer>
         <LabelInputContainer className="mb-4">
@@ -83,6 +86,7 @@ export function SignupFormDemo() {
             id="password"
             placeholder="••••••••"
             type="password"
+            value={inputs.password}
           />
         </LabelInputContainer>
 
@@ -98,8 +102,8 @@ export function SignupFormDemo() {
 
         <div className="flex flex-col space-y-4">
           <button
-            className=" relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50 dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)]"
-            type="submit"
+            className="relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50 dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)]"
+            type="button"
           >
             <IconBrandGithub className="h-4 w-4 text-neutral-800 dark:text-neutral-300" />
             <span className="text-neutral-700 dark:text-neutral-300 text-sm">
@@ -108,8 +112,8 @@ export function SignupFormDemo() {
             <BottomGradient />
           </button>
           <button
-            className=" relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50 dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)]"
-            type="submit"
+            className="relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50 dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)]"
+            type="button"
           >
             <IconBrandGoogle className="h-4 w-4 text-neutral-800 dark:text-neutral-300" />
             <span className="text-neutral-700 dark:text-neutral-300 text-sm">
