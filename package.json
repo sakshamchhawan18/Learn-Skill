@@ -1,0 +1,16 @@
+{
+  "name": "LearnSkill",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm start"
+  },
+  "dependencies": {
+    "cross": "^1.0.0",
+    "firebase": "^10.12.2"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
