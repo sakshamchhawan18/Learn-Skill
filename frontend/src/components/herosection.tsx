@@ -8,11 +8,11 @@ function Herosection() {
   const words = [
     {
       text: "Learn",
-      className: "text-blue-500 dark:text-orange-500",
+      className: "text-white-500 dark:text-white-100",
     },
     {
       text: "Skill.",
-      className: "text-blue-500 dark:text-orange-500",
+      className: "text-white-500 dark:text-white-500",
     },
   ];
 

@@ -7,7 +7,8 @@ import { Input } from "./ui/input";
 import { cn } from "@/utils/cn";
 import { IconBrandGithub, IconBrandGoogle } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
-import { auth } from "@/firebase/firebase";
+import { auth, firestore } from "@/firebase/firebase";
+import { doc, setDoc } from "firebase/firestore";
 
 export function SignupFormDemo() {
   const [inputs, setInputs] = useState({
@@ -15,6 +16,7 @@ export function SignupFormDemo() {
     lastname: "",
     email: "",
     password: "",
+    userType:"student"
   });
   const [createUserWithEmailAndPassword, user, loading, error] =
     useCreateUserWithEmailAndPassword(auth);
@@ -22,14 +24,31 @@ export function SignupFormDemo() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (
+      !inputs.email ||
+      !inputs.password ||
+      !inputs.firstname ||
+      !inputs.lastname
+    )
+      return alert("Please fill all the fields");
     try {
       const newUser = await createUserWithEmailAndPassword(
         inputs.email,
         inputs.password
       );
-      if (!newUser) {
-        router.push("/dashboard");
-      }
+      if (!newUser) return;
+
+      const userData = {
+        uid: newUser.user.uid,
+        email: newUser.user.email,
+        firstname: inputs.firstname,
+        lastname: inputs.lastname,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        userType: "student",
+      };
+      await setDoc(doc(firestore, "users", newUser.user.uid), userData);
+      router.push("/dashboard");
     } catch (error: any) {
       console.error("Error creating user:", error.message);
       alert(error.message);
