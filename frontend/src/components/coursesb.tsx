@@ -1,6 +1,6 @@
 "use client"
 import React from "react";
-import { Vortex } from "../ui/vortex";
+import { Vortex } from "./ui/vortex";
 
 export function Coursesb() {
   return (

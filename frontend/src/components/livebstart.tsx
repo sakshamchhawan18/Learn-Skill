@@ -1,9 +1,9 @@
 "use client";
 import React from "react";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
-import { Button } from "../ui/moving-border";
-import { ContainerScroll } from "../ui/container-scroll-animation";
+import { Label } from "./ui/label";
+import { Input } from "./ui/input";
+import { Button } from "./ui/moving-border";
+import { ContainerScroll } from "./ui/container-scroll-animation";
 import { cn } from "@/utils/cn";
 import Image from "next/image";
 import { useRouter } from "next/navigation";

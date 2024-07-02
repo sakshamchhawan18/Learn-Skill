@@ -1,7 +1,7 @@
 "use client";
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { TypewriterEffectSmooth } from '../ui/typewriter-effect';
+import { TypewriterEffectSmooth } from './ui/typewriter-effect';
 import Image from 'next/image';
 
 function Herosection() {
