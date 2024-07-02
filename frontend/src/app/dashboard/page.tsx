@@ -92,16 +92,17 @@ export default async function Dashboard() {
 
       </div>
 
-      <div className='grid md:grid-cols-2 sm:grid-cols-1 w-full gap-3'>
+      <div className='grid md:grid-cols-1 sm:grid-cols-1 w-full gap-3'>
         <Card className="">
           <CardHeader>
             <CardTitle>Upcoming Live Class</CardTitle>
           </CardHeader>
-          <CardContent className="pl-2">
+          <CardContent className="pl-1">
             <ItemList />
             
           </CardContent>
         </Card>
+        <br/>
         <Card className="">
           <CardHeader className="flex flex-row items-center">
             <div className="grid gap-2">
