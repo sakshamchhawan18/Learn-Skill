@@ -2,8 +2,7 @@
 import React, { useState } from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import { Inputd } from "../ui/inputd"; // Assuming Inputd is a different styled input component
-import { cn } from "@/utils/cn";
+import { cn } from "@/utils/cn"; // Utility for combining class names
 
 export function ScheduleLive() {
   const [formData, setFormData] = useState({
@@ -24,6 +23,7 @@ export function ScheduleLive() {
 
   const [preview, setPreview] = useState<string | null>(null);
 
+  // Handle input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value, files } = e.target;
     if (id === "uploadthumbnail" && files) {
@@ -37,6 +37,7 @@ export function ScheduleLive() {
     setFormErrors((prev) => ({ ...prev, [id]: "" }));
   };
 
+  // Validate form data
   const validateForm = () => {
     const errors = {
       title: formData.title ? "" : "Title is required.",
@@ -46,17 +47,21 @@ export function ScheduleLive() {
       thumbnail: formData.thumbnail ? "" : "Thumbnail is required.",
     };
 
-    // Validate date
+    // Get the current date and time
     const currentDate = new Date();
     const selectedDate = new Date(formData.date);
 
-    if (formData.date && selectedDate < currentDate.setHours(0, 0, 0, 0)) {
+    // Validate date - must not be in the past
+    if (formData.date && selectedDate.getTime() < currentDate.setHours(0, 0, 0, 0)) {
       errors.date = "Date cannot be in the past.";
     }
 
-    // Validate time if the date is today
-    if (formData.date && selectedDate.toDateString() === new Date().toDateString()) {
-      const currentTime = new Date().toTimeString().split(" ")[0];
+    // Validate time if the selected date is today
+    if (
+      formData.date &&
+      selectedDate.toDateString() === currentDate.toDateString()
+    ) {
+      const currentTime = currentDate.toTimeString().slice(0, 5); // Get current time in HH:MM format
       if (formData.time && formData.time < currentTime) {
         errors.time = "Time cannot be in the past.";
       }
@@ -68,12 +73,13 @@ export function ScheduleLive() {
     return !Object.values(errors).some((error) => error);
   };
 
+  // Handle form submission
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (validateForm()) {
       console.log("Form submitted", formData);
       
-      // Prepare FormData for the file upload
+      // Prepare FormData for file upload
       const formDataToSubmit = new FormData();
       formDataToSubmit.append("title", formData.title);
       formDataToSubmit.append("description", formData.description);
@@ -99,7 +105,6 @@ export function ScheduleLive() {
       <h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
         Schedule Live Class
       </h2>
-      
 
       <form className="my-8" onSubmit={handleSubmit}>
         <div className="flex flex-col space-y-4 mb-4">
@@ -168,7 +173,7 @@ export function ScheduleLive() {
               <img
                 src={preview}
                 alt="Thumbnail Preview"
-                className="w-40 h-40 object-cover rounded-md"
+                className="w-100 h-100 object-cover rounded-md"
               />
             </div>
           )}

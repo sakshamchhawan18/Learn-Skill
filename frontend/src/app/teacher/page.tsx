@@ -1,5 +1,5 @@
 import RoleSelection from "@/components/role-selection";
-import { SignupFormDemo } from "@/components/signup-form";
+import { SignupFormDemo } from "./teacher-signup-form";
 
 import Image from "next/image";
 
