@@ -13,13 +13,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
-import {  Settings, User } from "lucide-react";
+import { Settings, User } from "lucide-react";
 import { auth, db } from "@/firebase/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
-import  Logout  from "@/components/buttons/Logout";
+import Logout from "@/components/buttons/Logout";
+import { Login } from "@/components/login";
+import { useRouter } from "next/navigation";
+
 
 export function Profile() {
+  const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [userData, setUserData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -48,8 +52,11 @@ export function Profile() {
     return <div>Loading...</div>;
   }
 
+  const handleLoginClick = ()=>{
+    router.push("/login")
+  }
   if (!user) {
-    return <div>Please log in.</div>;
+    return <button onClick={handleLoginClick}>Please log in.</button>;
   }
 
   return (
@@ -57,24 +64,26 @@ export function Profile() {
       <DropdownMenuTrigger asChild className="w-[2.25rem] h-[2.25rem]">
         <Avatar>
           <AvatarImage src={userData?.photoURL} alt="User Profile" />
-          <AvatarFallback>{userData?.displayName?.charAt(0) || "U"}</AvatarFallback>
+          <AvatarFallback className = "mt-0 hover:cursor-pointer" >
+            {userData?.firstname || userData?.displayName || "U"}
+          </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <Link href="/user-profile">
+          <Link href="/user-profile" >
             <DropdownMenuItem>
-              <User className="mr-2 h-4 w-4" />
-              <span>Profile</span>
-              <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+              <User className="mr-2 h-4 w-4 hover:cursor-pointer" />
+              <span className="hover:cursor-pointer">Profile</span>
+              <DropdownMenuShortcut >⇧⌘P</DropdownMenuShortcut>
             </DropdownMenuItem>
           </Link>
           <Link href="/dashboard/settings">
             <DropdownMenuItem>
-              <Settings className="mr-2 h-4 w-4" />
-              <span>Settings</span>
+              <Settings className="mr-2 h-4 w-4 hover:cursor-pointer" />
+              <span className="hover:cursor-pointer">Settings</span>
               <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
             </DropdownMenuItem>
           </Link>
@@ -82,7 +91,6 @@ export function Profile() {
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => auth.signOut()}>
           <Logout />
-          <span>Log out</span>
           <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
         </DropdownMenuItem>
       </DropdownMenuContent>
