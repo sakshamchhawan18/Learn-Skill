@@ -6,39 +6,55 @@ import { cn } from "@/utils/cn";
 import {
   IconBrandGithub,
   IconBrandGoogle,
-  IconBrandOnlyfans,
 } from "@tabler/icons-react";
 import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { auth } from "@/firebase/firebase";
 import { useRouter } from "next/navigation";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
 
 export function Login() {
   const [inputs, setInputs] = useState({ email: "", password: "" });
-
   const [signInWithEmailAndPassword, user, loading, error] =
     useSignInWithEmailAndPassword(auth);
+  const router = useRouter();
+  const db = getFirestore();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputs((prev) => ({ ...prev, [e.target.id]: e.target.value }));
   };
-  const router = useRouter();
+
   const handleLogin = async (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!inputs.email || !inputs.password) {return alert("Please fill all fields!")};
-      try {
-        const newUser = await signInWithEmailAndPassword(   
-          inputs.email,
-          inputs.password
-          );
-        if (!newUser) {return};
-        router.push("/");
-      } catch (error: any) {
-        // toast.error("Login error, check details!", {position : "top-center", autoClose:2000, theme:"dark"})
-        alert(error.message);
+    if (!inputs.email || !inputs.password) {
+      return alert("Please fill all fields!");
+    }
+    try {
+      const newUser = await signInWithEmailAndPassword(
+        inputs.email,
+        inputs.password
+      );
+      if (!newUser) {
+        return;
       }
+
+      // Fetch user role from Firestore
+      const userDoc = await getDoc(doc(db, "users", newUser.user.uid));
+      const userData = userDoc.data();
+      if (userData?.userType === "student") {
+        router.push("/student-dashboard");
+      } else if (userData?.userType === "teacher") {
+        router.push("/dashboard");
+      } else {
+        alert("User role is undefined.");
+      }
+    } catch (error: any) {
+      alert(error.message);
+    }
   };
-  if (error) alert(error.message);
+
+  if (error) alert("Try again!");
   useEffect(() => {}, [error]);
+
   return (
     <div className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-white dark:bg-black">
       <h1 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">

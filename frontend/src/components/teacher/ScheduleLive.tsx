@@ -4,6 +4,7 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { cn } from "@/utils/cn"; // Utility for combining class names
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export function ScheduleLive() {
 
@@ -179,7 +180,7 @@ export function ScheduleLive() {
           {preview && (
             <div className="mt-4">
               <p className="text-sm text-neutral-600 dark:text-neutral-300">Preview:</p>
-              <img
+              <Image
                 src={preview}
                 alt="Thumbnail Preview"
                 className="w-100 h-100 object-cover rounded-md"
