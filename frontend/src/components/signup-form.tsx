@@ -16,21 +16,47 @@ export function SignupFormDemo() {
     lastname: "",
     email: "",
     password: "",
-    userType:"student"
+    userType: "student",
   });
+
   const [createUserWithEmailAndPassword, user, loading, error] =
     useCreateUserWithEmailAndPassword(auth);
   const router = useRouter();
 
+  const [formErrors, setFormErrors] = useState({
+    firstname: "",
+    lastname: "",
+    email: "",
+    password: "",
+  });
+
+  const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputs((prev) => ({ ...prev, [e.target.id]: e.target.value }));
+    setFormErrors((prev) => ({ ...prev, [e.target.id]: "" }));
+  };
+
+  const validateForm = () => {
+    const errors = {
+      firstname: inputs.firstname ? "" : "First name is required.",
+      lastname: inputs.lastname ? "" : "Last name is required.",
+      email: inputs.email ? "" : "Email is required.",
+      password: inputs.password ? "" : "Password is required.",
+    };
+    if (!inputs.email.includes("@")) errors.email = "Invalid email address";
+    if (inputs.password.length < 6)
+      errors.password = "Password must be at least 6 characters";
+    if (inputs.firstname.length < 2)
+      errors.firstname = "First name must be at least 2 characters";
+    if (inputs.lastname.length < 2)
+      errors.lastname = "Last name must be at least 2 characters";
+    setFormErrors(errors);
+    return !Object.values(errors).some((error) => error);
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (
-      !inputs.email ||
-      !inputs.password ||
-      !inputs.firstname ||
-      !inputs.lastname
-    )
-      return alert("Please fill all the fields");
+    if (!validateForm()) return alert("Please fill all the fields correctly");
+
     try {
       const newUser = await createUserWithEmailAndPassword(
         inputs.email,
@@ -55,10 +81,6 @@ export function SignupFormDemo() {
     }
   };
 
-  const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputs((prev) => ({ ...prev, [e.target.id]: e.target.value }));
-  };
-
   return (
     <div className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-white dark:bg-black">
       <h1 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
@@ -76,6 +98,9 @@ export function SignupFormDemo() {
               type="text"
               value={inputs.firstname}
             />
+            {formErrors.firstname && (
+              <p className="text-red-500 text-sm">{formErrors.firstname}</p>
+            )}
           </LabelInputContainer>
           <LabelInputContainer>
             <Label htmlFor="lastname">Last name</Label>
@@ -86,6 +111,9 @@ export function SignupFormDemo() {
               type="text"
               value={inputs.lastname}
             />
+            {formErrors.lastname && (
+              <p className="text-red-500 text-sm">{formErrors.lastname}</p>
+            )}
           </LabelInputContainer>
         </div>
         <LabelInputContainer className="mb-4">
@@ -97,6 +125,9 @@ export function SignupFormDemo() {
             type="email"
             value={inputs.email}
           />
+          {formErrors.email && (
+            <p className="text-red-500 text-sm">{formErrors.email}</p>
+          )}
         </LabelInputContainer>
         <LabelInputContainer className="mb-4">
           <Label htmlFor="password">Password</Label>
@@ -107,6 +138,9 @@ export function SignupFormDemo() {
             type="password"
             value={inputs.password}
           />
+          {formErrors.password && (
+            <p className="text-red-500 text-sm">{formErrors.password}</p>
+          )}
         </LabelInputContainer>
 
         <button
