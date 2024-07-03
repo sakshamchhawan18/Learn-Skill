@@ -71,7 +71,7 @@ export function SignupFormDemo() {
         lastname: inputs.lastname,
         createdAt: Date.now(),
         updatedAt: Date.now(),
-        userType: "student",
+        userType: "teacher",
       };
       await setDoc(doc(firestore, "users", newUser.user.uid), userData);
       router.push("/dashboard");
