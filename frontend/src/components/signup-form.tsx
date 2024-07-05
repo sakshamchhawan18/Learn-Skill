@@ -60,7 +60,7 @@ export function SignupFormDemo() {
     try {
       const newUser = await createUserWithEmailAndPassword(
         inputs.email,
-        inputs.password
+        inputs.password 
       );
       if (!newUser) return;
 

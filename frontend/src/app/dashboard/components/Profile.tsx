@@ -53,19 +53,19 @@ export function Profile() {
   }
 
   const handleLoginClick = ()=>{
-    router.push("/login")
+    router.push("/")
   }
   if (!user) {
-    return <button onClick={handleLoginClick}>Please log in.</button>;
+    return <button onClick={handleLoginClick}>Log in.</button>;
   }
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild className="w-[2.25rem] h-[2.25rem]">
         <Avatar>
-          <AvatarImage src={userData?.photoURL} alt="User Profile" />
-          <AvatarFallback className = "mt-0 hover:cursor-pointer" >
-            {userData?.firstname || userData?.displayName || "U"}
+          <AvatarImage src={userData?.photoURL} alt="User Profile"/>
+          <AvatarFallback className = "mt-0 hover:cursor-pointer display:inline-block  width:fit-content " >
+            {userData?.firstname || userData?.lastname || "User"}
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>

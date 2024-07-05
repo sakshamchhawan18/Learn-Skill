@@ -11,7 +11,7 @@ const Dashboard = ({ children }: { children: React.ReactNode }) => {
       <Sidebar />
       {/* Main content */}
       <div className="flex-1 p-8 bg-gray-100 overflow-y-auto">
-        <h1>Lets have sex</h1>
+        <h1>Bruhhhh </h1>
       </div>
     </div>
   );

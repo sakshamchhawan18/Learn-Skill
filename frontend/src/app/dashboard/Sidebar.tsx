@@ -54,7 +54,7 @@ export default function DashboardSideBar() {
               href="/dashboard/liveclasses"
             >
               <div className="border rounded-lg dark:bg-black dark:border-gray-800 border-gray-400 p-1 bg-white">
-                <FaTasks className="h-3 w-3" />
+                <FaTasks />
               </div>
               Live
             </Link>
