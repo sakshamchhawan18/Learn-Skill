@@ -23,7 +23,7 @@ export function Livebstart() {
             <h1 className="text-4xl font-semibold text-black dark:text-white">
               Live Classes <br />
               <span className="text-4xl md:text-[6rem] font-bold mt-1 leading-none">
-                Have a look
+                Have a look good
               </span><br />
               <span className="text-2xl md:text-[2rem] font-bold mt-1 leading-none">
                 Scroll down to Join or Start a meeting
