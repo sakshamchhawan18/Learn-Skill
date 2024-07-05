@@ -10,6 +10,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "@/firebase/firebase";
 import { useEffect, useState } from "react";
 
+
 export default function Home() {
   const router = useRouter();
   const [user, loading, error] = useAuthState(auth);
@@ -26,6 +27,7 @@ export default function Home() {
       <WobbleCardDemo />
       <Text />
       <Footer />
+      
     </main>
   );
 }

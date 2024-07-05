@@ -1,11 +1,11 @@
-import { MeetingPage } from '@/components/MeetingPage'
-import React from 'react'
+//import { MeetingPage } from '@/components/MeetingPage'
+//import React from 'react'
 
 function Meet() {
   return (
+ 
     <div>
-        Meet
-        <MeetingPage />    
+      MEET IN PROGRESS
     </div>
   )
 }

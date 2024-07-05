@@ -4,7 +4,7 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['assets.aceternity.com','letsenhance.io'],
+    domains: ['assets.aceternity.com','letsenhance.io','utfs.io'],
 
   },
 }

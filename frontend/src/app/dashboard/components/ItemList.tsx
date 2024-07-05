@@ -9,6 +9,8 @@ interface Item {
   time: string;
 }
 
+// Fetches the live class according to the teacher name 
+
 const items: Item[] = [
   { id: 1, title: 'Item 1', description: 'Description for Item 1', date: '2024-07-03', time: '10:00 AM' },
   { id: 2, title: 'Item 2', description: 'Description for Item 2', date: '2024-07-04', time: '11:00 AM' },
