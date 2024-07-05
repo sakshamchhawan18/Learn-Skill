@@ -182,6 +182,8 @@ export function ScheduleLive() {
               <p className="text-sm text-neutral-600 dark:text-neutral-300">Preview:</p>
               <Image
                 src={preview}
+                height={100}
+                width={100}
                 alt="Thumbnail Preview"
                 className="w-100 h-100 object-cover rounded-md"
               />
