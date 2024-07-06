@@ -76,7 +76,7 @@ export function Profile() {
           <Link href="/user-profile" >
             <DropdownMenuItem>
               <User className="mr-2 h-4 w-4 hover:cursor-pointer" />
-              <span className="hover:cursor-pointer">Profile</span>
+              <span className="hover:cursor-pointer">Profile </span>
               <DropdownMenuShortcut >⇧⌘P</DropdownMenuShortcut>
             </DropdownMenuItem>
           </Link>

@@ -2,111 +2,96 @@
 import React, { useState } from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import { cn } from "@/utils/cn"; // Utility for combining class names
+import { cn } from "@/utils/cn";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { firestore } from "@/firebase/firebase";
+import { doc, setDoc } from "firebase/firestore";
+import { v4 as uuidv4 } from "uuid";
 
 export function ScheduleLive() {
-
   const router = useRouter();
-  
-  const handleClick = () => {
-      
-    };
+
+  const handleClick = () => {};
 
   const [formData, setFormData] = useState({
+    id: "",
     title: "",
     description: "",
     date: "",
     time: "",
+    order: "",
     thumbnail: null as File | null,
   });
 
   const [formErrors, setFormErrors] = useState({
+    id: "",
     title: "",
     description: "",
     date: "",
     time: "",
+    order: "0",
     thumbnail: "",
   });
 
   const [preview, setPreview] = useState<string | null>(null);
 
-  // Handle input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value, files } = e.target;
-    if (id === "uploadthumbnail" && files) {
+    const { id, value, files, name } = e.target;
+    if (name === "thumbnail" && files) {
       const file = files[0];
       setFormData((prev) => ({ ...prev, thumbnail: file }));
       const previewUrl = URL.createObjectURL(file);
       setPreview(previewUrl);
     } else {
-      setFormData((prev) => ({ ...prev, [id]: value }));
+      setFormData((prev) => ({ ...prev, [name]: value }));
     }
     setFormErrors((prev) => ({ ...prev, [id]: "" }));
   };
 
-  // Validate form data
   const validateForm = () => {
     const errors = {
       title: formData.title ? "" : "Title is required.",
       description: formData.description ? "" : "Description is required.",
       date: formData.date ? "" : "Date is required.",
       time: formData.time ? "" : "Time is required.",
-      thumbnail: formData.thumbnail ? "" : "Thumbnail is required.",
     };
 
-    // Get the current date and time
     const currentDate = new Date();
     const selectedDate = new Date(formData.date);
 
-    // Validate date - must not be in the past
     if (formData.date && selectedDate.getTime() < currentDate.setHours(0, 0, 0, 0)) {
       errors.date = "Date cannot be in the past.";
     }
 
-    // Validate time if the selected date is today
-    if (
-      formData.date &&
-      selectedDate.toDateString() === currentDate.toDateString()
-    ) {
-      const currentTime = currentDate.toTimeString().slice(0, 5); // Get current time in HH:MM format
+    if (formData.date && selectedDate.toDateString() === currentDate.toDateString()) {
+      const currentTime = currentDate.toTimeString().slice(0, 5);
       if (formData.time && formData.time < currentTime) {
         errors.time = "Time cannot be in the past.";
       }
     }
 
     setFormErrors(errors);
-
-    // Check if any errors exist
     return !Object.values(errors).some((error) => error);
   };
 
-  // Handle form submission
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (validateForm()) {
       console.log("Form submitted", formData);
-      router.push('/dashboard');
-      
-      // Prepare FormData for file upload
+      router.push("/dashboard");
+
       const formDataToSubmit = new FormData();
       formDataToSubmit.append("title", formData.title);
       formDataToSubmit.append("description", formData.description);
       formDataToSubmit.append("date", formData.date);
       formDataToSubmit.append("time", formData.time);
-      if (formData.thumbnail) {
-        formDataToSubmit.append("thumbnail", formData.thumbnail);
-      }
 
-      // Perform file upload (adjust URL and logic as needed)
-      fetch("/api/upload", {
-        method: "POST",
-        body: formDataToSubmit,
-      })
-        .then((response) => response.json())
-        .then((data) => console.log(data))
-        .catch((error) => console.error(error));
+      const uniqueId = uuidv4();
+      const docId = `${formData.title}-${uniqueId}`;
+      const newOrder = { ...formData, id: docId, order: Number(formData.order) };
+      await setDoc(doc(firestore, "schedule-live", docId), newOrder);
+      alert("saved");
     }
   };
 
@@ -118,27 +103,47 @@ export function ScheduleLive() {
 
       <form className="my-8" onSubmit={handleSubmit}>
         <div className="flex flex-col space-y-4 mb-4">
+        <LabelInputContainer>
+            <Label htmlFor="order">Order</Label>
+            <Input
+              id="order"
+              name="order"
+              placeholder="1"
+              type="text"
+              value={formData.order}
+              onChange={handleInputChange}
+            />
+            {formErrors.title && (
+              <p className="text-red-500 text-sm">{formErrors.title}</p>
+            )}
+          </LabelInputContainer>
           <LabelInputContainer>
             <Label htmlFor="title">Title</Label>
             <Input
               id="title"
+              name="title"
               placeholder="Learn Figma in 3 hr"
               type="text"
               value={formData.title}
               onChange={handleInputChange}
             />
-            {formErrors.title && <p className="text-red-500 text-sm">{formErrors.title}</p>}
+            {formErrors.title && (
+              <p className="text-red-500 text-sm">{formErrors.title}</p>
+            )}
           </LabelInputContainer>
           <LabelInputContainer>
             <Label htmlFor="description">Description</Label>
             <Input
               id="description"
+              name="description"
               placeholder="How you will learn to play around with text fonts"
               type="text"
               value={formData.description}
               onChange={handleInputChange}
             />
-            {formErrors.description && <p className="text-red-500 text-sm">{formErrors.description}</p>}
+            {formErrors.description && (
+              <p className="text-red-500 text-sm">{formErrors.description}</p>
+            )}
           </LabelInputContainer>
         </div>
 
@@ -147,53 +152,36 @@ export function ScheduleLive() {
             <Label htmlFor="date">Date</Label>
             <Input
               id="date"
+              name="date"
               placeholder="12/12/12"
               type="date"
               value={formData.date}
               onChange={handleInputChange}
             />
-            {formErrors.date && <p className="text-red-500 text-sm">{formErrors.date}</p>}
+            {formErrors.date && (
+              <p className="text-red-500 text-sm">{formErrors.date}</p>
+            )}
           </LabelInputContainer>
           <LabelInputContainer className="w-1/2">
             <Label htmlFor="time">Time</Label>
             <Input
               id="time"
-              placeholder="10:10"
+              name="time"
+              placeholder="12:00"
               type="time"
               value={formData.time}
               onChange={handleInputChange}
             />
-            {formErrors.time && <p className="text-red-500 text-sm">{formErrors.time}</p>}
+            {formErrors.time && (
+              <p className="text-red-500 text-sm">{formErrors.time}</p>
+            )}
           </LabelInputContainer>
         </div>
 
-        <LabelInputContainer className="mb-8">
-          <Label htmlFor="uploadthumbnail">Your thumbnail</Label>
-          <input
-            id="uploadthumbnail"
-            type="file"
-            accept="image/*"
-            onChange={handleInputChange}
-            className="border p-2 rounded-md dark:bg-zinc-800 dark:text-white"
-          />
-          {formErrors.thumbnail && <p className="text-red-500 text-sm">{formErrors.thumbnail}</p>}
-          {preview && (
-            <div className="mt-4">
-              <p className="text-sm text-neutral-600 dark:text-neutral-300">Preview:</p>
-              <Image
-                src={preview}
-                height={100}
-                width={100}
-                alt="Thumbnail Preview"
-                className="w-100 h-100 object-cover rounded-md"
-              />
-            </div>
-          )}
-        </LabelInputContainer>
-
         <button
-          className="bg-gradient-to-br relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
-          type="submit" onClick={handleClick}
+          className="relative py-3 w-full text-sm rounded-md border dark:border-neutral-700 text-neutral-900 dark:text-white bg-neutral-100 dark:bg-neutral-900 font-medium hover:bg-transparent hover:text-black dark:hover:text-white hover:border-neutral-900 dark:hover:border-neutral-600 transition-all flex justify-center items-center group/btn shadow-button dark:shadow-button-dark"
+          type="submit"
+          onClick={handleClick}
         >
           Schedule &rarr;
           <BottomGradient />
