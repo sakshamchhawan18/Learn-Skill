@@ -1,30 +1,20 @@
-// components/ItemList.tsx
-import React from 'react';
+"use client";
+
+import { firestore } from '@/firebase/firebase';
+import { collection, getDocs, orderBy, query } from 'firebase/firestore';
+import React, { useEffect, useState } from 'react';
 
 interface Item {
-  id: number;
+  id: string;
   title: string;
   description: string;
   date: string;
   time: string;
 }
 
-// Fetches the live class according to the teacher name 
-
-const items: Item[] = [
-  { id: 1, title: 'Item 1', description: 'Description for Item 1', date: '2024-07-03', time: '10:00 AM' },
-  { id: 2, title: 'Item 2', description: 'Description for Item 2', date: '2024-07-04', time: '11:00 AM' },
-  { id: 3, title: 'Item 3', description: 'Description for Item 3', date: '2024-07-05', time: '12:00 PM' },
-  { id: 4, title: 'Item 3', description: 'Description for Item 3', date: '2024-07-05', time: '12:00 PM' },
-  { id: 5, title: 'Item 3', description: 'Description for Item 3', date: '2024-07-05', time: '12:00 PM' },
-  { id: 6, title: 'Item 3', description: 'Description for Item 3', date: '2024-07-05', time: '12:00 PM' },
-  { id: 7, title: 'Item 3', description: 'Description for Item 3', date: '2024-07-05', time: '12:00 PM' },
-  { id: 8, title: 'Item 3', description: 'Description for Item 3', date: '2024-07-05', time: '12:00 PM' },
-  { id: 9, title: 'Item 3', description: 'Description for Item 3', date: '2024-07-05', time: '12:00 PM' },
-  // Add more items as needed
-];
-
 const ItemList: React.FC = () => {
+  const scheduledClasses = useGetScheduledClasses();
+
   return (
     <div className="overflow-x-auto p-4">
       <table className="min-w-full divide-y divide-gray-200">
@@ -38,12 +28,12 @@ const ItemList: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {items.map((item, index) => (
+          {scheduledClasses.map((item, index) => (
             <tr
               key={item.id}
               className={`hover:text-blue-500 ${index % 2 === 0 ? 'bg-black-50' : 'bg-gray-900'}`}
             >
-              <td className="px-4 py-2 text-sm text-white-700">{item.id}</td>
+              <td className="px-4 py-2 text-sm text-white-700">{index + 1}</td>
               <td className="px-4 py-2 text-sm text-white-700">{item.title}</td>
               <td className="px-4 py-2 text-sm text-white-700">{item.description}</td>
               <td className="px-4 py-2 text-sm text-white-700">{item.date}</td>
@@ -57,3 +47,30 @@ const ItemList: React.FC = () => {
 };
 
 export default ItemList;
+
+function useGetScheduledClasses(): Item[] {
+  const [classes, setClasses] = useState<Item[]>([]);
+
+  useEffect(() => {
+    const getClasses = async () => {
+      const q = query(collection(firestore, "schedule-live"), orderBy("order", "asc"));
+      const querySnapshot = await getDocs(q);
+      const fetchedClasses: Item[] = querySnapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          title: data.title,
+          description: data.description,
+          date: data.date,
+          time: data.time,
+        };
+      });
+
+      setClasses(fetchedClasses);
+    };
+
+    getClasses();
+  }, []);
+
+  return classes;
+}
