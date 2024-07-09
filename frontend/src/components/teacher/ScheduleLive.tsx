@@ -4,33 +4,37 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { cn } from "@/utils/cn";
 import { useRouter } from "next/navigation";
+import { useAuthState } from "react-firebase-hooks/auth";
 import Image from "next/image";
-import { firestore } from "@/firebase/firebase";
+import { firestore, auth } from "@/firebase/firebase";
 import { doc, setDoc } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
 
 export function ScheduleLive() {
   const router = useRouter();
+  const [user] = useAuthState(auth); // Get the authenticated user
 
   const handleClick = () => {};
 
   const [formData, setFormData] = useState({
     id: "",
+    uid: "",
     title: "",
     description: "",
     date: "",
     time: "",
-    order: "",
+    order: 0,
     thumbnail: null as File | null,
   });
 
   const [formErrors, setFormErrors] = useState({
     id: "",
+    uid: "",
     title: "",
     description: "",
     date: "",
     time: "",
-    order: "0",
+    order: 0,
     thumbnail: "",
   });
 
@@ -79,19 +83,19 @@ export function ScheduleLive() {
     e.preventDefault();
     if (validateForm()) {
       console.log("Form submitted", formData);
-      router.push("/dashboard");
-
-      const formDataToSubmit = new FormData();
-      formDataToSubmit.append("title", formData.title);
-      formDataToSubmit.append("description", formData.description);
-      formDataToSubmit.append("date", formData.date);
-      formDataToSubmit.append("time", formData.time);
 
       const uniqueId = uuidv4();
       const docId = `${formData.title}-${uniqueId}`;
-      const newOrder = { ...formData, id: docId, order: Number(formData.order) };
+      const newOrder = {
+        ...formData,
+        id: docId,
+        uid: user?.uid || "", // Include the userId
+        order: Number(formData.order),
+      };
+
       await setDoc(doc(firestore, "schedule-live", docId), newOrder);
-      alert("saved");
+      alert("Class scheduled successfully!");
+      router.push("/dashboard");
     }
   };
 
@@ -103,20 +107,6 @@ export function ScheduleLive() {
 
       <form className="my-8" onSubmit={handleSubmit}>
         <div className="flex flex-col space-y-4 mb-4">
-        <LabelInputContainer>
-            <Label htmlFor="order">Order</Label>
-            <Input
-              id="order"
-              name="order"
-              placeholder="1"
-              type="text"
-              value={formData.order}
-              onChange={handleInputChange}
-            />
-            {formErrors.title && (
-              <p className="text-red-500 text-sm">{formErrors.title}</p>
-            )}
-          </LabelInputContainer>
           <LabelInputContainer>
             <Label htmlFor="title">Title</Label>
             <Input

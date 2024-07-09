@@ -3,10 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { cn } from "@/utils/cn";
-import {
-  IconBrandGithub,
-  IconBrandGoogle,
-} from "@tabler/icons-react";
+import { IconBrandGithub, IconBrandGoogle } from "@tabler/icons-react";
 import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { auth } from "@/firebase/firebase";
 import { useRouter } from "next/navigation";
@@ -16,6 +13,7 @@ export function Login() {
   const [inputs, setInputs] = useState({ email: "", password: "" });
   const [signInWithEmailAndPassword, user, loading, error] =
     useSignInWithEmailAndPassword(auth);
+  const [loginError, setLoginError] = useState(false); // State to manage login error
   const router = useRouter();
   const db = getFirestore();
 
@@ -48,12 +46,17 @@ export function Login() {
         alert("User role is undefined.");
       }
     } catch (error: any) {
-      alert(error.message);
+      setLoginError(true); // Set login error state to true
+      console.error("Login error:", error);
     }
   };
+  // if (error) alert("Try again!");
 
-  if (error) alert("Try again!");
-  useEffect(() => {}, [error]);
+  useEffect(() => {
+    if (error) {
+      setLoginError(true); // Set login error state to true if there's an error
+    }
+  }, [error]);
 
   return (
     <div className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-white dark:bg-black">
@@ -114,6 +117,7 @@ export function Login() {
           </button>
         </div>
       </form>
+      {loginError && <p className="text-red-500">Login failed. Please try again.</p>}
     </div>
   );
 }
