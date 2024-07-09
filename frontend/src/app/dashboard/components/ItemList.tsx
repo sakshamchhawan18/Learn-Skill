@@ -1,148 +1,90 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { cn } from "@/utils/cn";
-import { IconBrandGithub, IconBrandGoogle } from "@tabler/icons-react";
-import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
-import { auth } from "@/firebase/firebase";
-import { useRouter } from "next/navigation";
-import { getFirestore, doc, getDoc } from "firebase/firestore";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
-export function Login() {
-  const [inputs, setInputs] = useState({ email: "", password: "" });
-  const [signInWithEmailAndPassword, user, loading, error] =
-    useSignInWithEmailAndPassword(auth);
-  const [loginError, setLoginError] = useState(false); // State to manage login error
-  const router = useRouter();
-  const db = getFirestore();
+import { firestore, auth } from '@/firebase/firebase';
+import { collection, getDocs, orderBy, query, where } from 'firebase/firestore';
+import React, { useEffect, useState } from 'react';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputs((prev) => ({ ...prev, [e.target.id]: e.target.value }));
-    // Reset login error state when input changes
-    setLoginError(false);
-  };
-
-  const handleLogin = async (e: React.ChangeEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!inputs.email || !inputs.password) {
-      return alert("Please fill all fields!");
-    }
-    try {
-      const newUser = await signInWithEmailAndPassword(
-        inputs.email,
-        inputs.password
-      );
-      if (!newUser) {
-        return;
-      }
-
-      // Fetch user role from Firestore
-      const userDoc = await getDoc(doc(db, "users", newUser.user.uid));
-      const userData = userDoc.data();
-      if (userData?.userType === "student") {
-        router.push("/student-dashboard");
-      } else if (userData?.userType === "teacher") {
-        router.push("/dashboard");
-      } else {
-        alert("User role is undefined.");
-      }
-    } catch (error: any) {
-      setLoginError(true); // Set login error state to true
-      // console.error("Login error:", error);
-    }
-  };
-
-  useEffect(() => {
-    if (error) {
-      setLoginError(true); // Set login error state to true if there's an error
-    }
-  }, [error]);
-
-  return (
-    <div className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-white dark:bg-black">
-      <h1 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
-        Welcome back to learn skill!
-      </h1>
-
-      <form className="my-8" onSubmit={handleLogin}>
-        <LabelInputContainer className="mb-4">
-          <Label htmlFor="email">Email Address</Label>
-          <Input
-            onChange={handleInputChange}
-            id="email"
-            placeholder="projectmayhem@fc.com"
-            type="email"
-          />
-        </LabelInputContainer>
-        <LabelInputContainer className="mb-4">
-          <Label htmlFor="password">Password</Label>
-          <Input
-            onChange={handleInputChange}
-            id="password"
-            placeholder="••••••••"
-            type="password"
-          />
-        </LabelInputContainer>
-
-        <button
-          className="bg-gradient-to-br relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
-          type="submit"
-        >
-          Login &rarr;
-          <BottomGradient />
-        </button>
-
-        <div className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent my-8 h-[1px] w-full" />
-
-        <div className="flex flex-col space-y-4">
-          <button
-            className=" relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50 dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)]"
-            type="submit"
-          >
-            <IconBrandGithub className="h-4 w-4 text-neutral-800 dark:text-neutral-300" />
-            <span className="text-neutral-700 dark:text-neutral-300 text-sm">
-              GitHub
-            </span>
-            <BottomGradient />
-          </button>
-          <button
-            className=" relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50 dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)]"
-            type="submit"
-          >
-            <IconBrandGoogle className="h-4 w-4 text-neutral-800 dark:text-neutral-300" />
-            <span className="text-neutral-700 dark:text-neutral-300 text-sm">
-              Google
-            </span>
-            <BottomGradient />
-          </button>
-        </div>
-      </form>
-
-      {loginError && <p className="text-red-500">Login failed. Please try again.</p>}
-    </div>
-  );
+interface Item {
+  id: string;
+  title: string;
+  description: string;
+  date: string;
+  time: string;
 }
 
-const BottomGradient = () => {
-  return (
-    <>
-      <span className="group-hover/btn:opacity-100 block transition duration-500 opacity-0 absolute h-px w-full -bottom-px inset-x-0 bg-gradient-to-r from-transparent via-cyan-500 to-transparent" />
-      <span className="group-hover/btn:opacity-100 blur-sm block transition duration-500 opacity-0 absolute h-px w-1/2 mx-auto -bottom-px inset-x-10 bg-gradient-to-r from-transparent via-indigo-500 to-transparent" />
-    </>
-  );
-};
+const ItemList: React.FC = () => {
+  const scheduledClasses = useGetScheduledClasses();
 
-const LabelInputContainer = ({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) => {
   return (
-    <div className={cn("flex flex-col space-y-2 w-full", className)}>
-      {children}
+    <div className="overflow-x-auto p-4">
+      <table className="min-w-full divide-y divide-gray-200">
+        <thead className="bg-gray-900">
+          <tr>
+            <th className="px-4 py-2 text-left text-sm font-semibold text-white-600">S.No</th>
+            <th className="px-4 py-2 text-left text-sm font-semibold text-white-600">Title</th>
+            <th className="px-4 py-2 text-left text-sm font-semibold text-white-600">Description</th>
+            <th className="px-4 py-2 text-left text-sm font-semibold text-white-600">Date</th>
+            <th className="px-4 py-2 text-left text-sm font-semibold text-white-600">Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          {scheduledClasses.length === 0 ? (
+            <tr>
+              <td colSpan={5} className="px-4 py-2 text-sm text-white-700 text-center">No scheduled classes</td>
+            </tr>
+          ) : (
+            scheduledClasses.map((item, index) => (
+              <tr
+                key={item.id}
+                className={`hover:text-blue-500 ${index % 2 === 0 ? 'bg-black-50' : 'bg-gray-900'}`}
+              >
+                <td className="px-4 py-2 text-sm text-white-700">{index + 1}</td>
+                <td className="px-4 py-2 text-sm text-white-700">{item.title}</td>
+                <td className="px-4 py-2 text-sm text-white-700">{item.description}</td>
+                <td className="px-4 py-2 text-sm text-white-700">{item.date}</td>
+                <td className="px-4 py-2 text-sm text-white-700">{item.time}</td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
     </div>
   );
 };
+
+export default ItemList;
+
+function useGetScheduledClasses(): Item[] {
+  const [classes, setClasses] = useState<Item[]>([]);
+  const [user] = useAuthState(auth);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const getClasses = async () => {
+      const q = query(
+        collection(firestore, "schedule-live"),
+        where("uid", "==", user.uid),
+        orderBy("order", "asc")
+      );
+      const querySnapshot = await getDocs(q);
+      const fetchedClasses: Item[] = querySnapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          title: data.title,
+          description: data.description,
+          date: data.date,
+          time: data.time,
+        };
+      });
+
+      setClasses(fetchedClasses);
+    };
+
+    getClasses();
+  }, [user]);
+
+  return classes;
+}

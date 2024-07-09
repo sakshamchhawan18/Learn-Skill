@@ -19,6 +19,8 @@ export function Login() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputs((prev) => ({ ...prev, [e.target.id]: e.target.value }));
+    // Reset login error state when input changes
+    setLoginError(false);
   };
 
   const handleLogin = async (e: React.ChangeEvent<HTMLFormElement>) => {
@@ -50,7 +52,6 @@ export function Login() {
       console.error("Login error:", error);
     }
   };
-  // if (error) alert("Try again!");
 
   useEffect(() => {
     if (error) {
@@ -117,6 +118,7 @@ export function Login() {
           </button>
         </div>
       </form>
+
       {loginError && <p className="text-red-500">Login failed. Please try again.</p>}
     </div>
   );
