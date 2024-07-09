@@ -1,187 +1,118 @@
 "use client";
-import React, { useState } from "react";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
+import React, { useEffect, useState } from "react";
+import { Label } from "./ui/label";
+import { Input } from "./ui/input";
 import { cn } from "@/utils/cn";
+import {
+  IconBrandGithub,
+  IconBrandGoogle,
+} from "@tabler/icons-react";
+import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
+import { auth } from "@/firebase/firebase";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
-import { firestore } from "@/firebase/firebase";
-import { doc, setDoc } from "firebase/firestore";
-import { v4 as uuidv4 } from "uuid";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
 
-export function ScheduleLive() {
+export function Login() {
+  const [inputs, setInputs] = useState({ email: "", password: "" });
+  const [signInWithEmailAndPassword, user, loading, error] =
+    useSignInWithEmailAndPassword(auth);
   const router = useRouter();
-
-  const handleClick = () => {};
-
-  const [formData, setFormData] = useState({
-    id: uuidv4(),
-    title: "",
-    description: "",
-    date: "",
-    time: "",
-    order: "0",
-    thumbnail: null as File | null,
-  });
-
-  const [formErrors, setFormErrors] = useState({
-    title: "",
-    description: "",
-    date: "",
-    time: "",
-    order: "",
-    thumbnail: "",
-  });
-
-  const [preview, setPreview] = useState<string | null>(null);
+  const db = getFirestore();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value, files, name } = e.target;
-    if (name === "thumbnail" && files) {
-      const file = files[0];
-      setFormData((prev) => ({ ...prev, thumbnail: file }));
-      const previewUrl = URL.createObjectURL(file);
-      setPreview(previewUrl);
-    } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
-    }
-    setFormErrors((prev) => ({ ...prev, [id]: "" }));
+    setInputs((prev) => ({ ...prev, [e.target.id]: e.target.value }));
   };
 
-  const validateForm = () => {
-    const errors = {
-      title: formData.title ? "" : "Title is required.",
-      description: formData.description ? "" : "Description is required.",
-      date: formData.date ? "" : "Date is required.",
-      time: formData.time ? "" : "Time is required.",
-      order: formData.order ? "" : "Order is required.",
-      thumbnail: "", // Assuming no validation for thumbnail, otherwise add validation here
-    };
-
-    const currentDate = new Date();
-    const selectedDate = new Date(formData.date);
-
-    if (formData.date && selectedDate.getTime() < currentDate.setHours(0, 0, 0, 0)) {
-      errors.date = "Date cannot be in the past.";
-    }
-
-    if (formData.date && selectedDate.toDateString() === currentDate.toDateString()) {
-      const currentTime = currentDate.toTimeString().slice(0, 5);
-      if (formData.time && formData.time < currentTime) {
-        errors.time = "Time cannot be in the past.";
-      }
-    }
-
-    setFormErrors(errors);
-    return !Object.values(errors).some((error) => error);
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (validateForm()) {
-      console.log("Form submitted", formData);
-      router.push("/dashboard");
+    if (!inputs.email || !inputs.password) {
+      return alert("Please fill all fields!");
+    }
+    try {
+      const newUser = await signInWithEmailAndPassword(
+        inputs.email,
+        inputs.password
+      );
+      if (!newUser) {
+        return;
+      }
 
-      const uniqueId = uuidv4();
-      const docId = `${formData.title}-${uniqueId}`;
-      const newOrder = { ...formData, id: docId, order: Number(formData.order) };
-
-      await setDoc(doc(firestore, "schedule-live", docId), newOrder);
-      alert("Saved successfully!");
+      // Fetch user role from Firestore
+      const userDoc = await getDoc(doc(db, "users", newUser.user.uid));
+      const userData = userDoc.data();
+      if (userData?.userType === "student") {
+        router.push("/student-dashboard");
+      } else if (userData?.userType === "teacher") {
+        router.push("/dashboard");
+      } else {
+        alert("User role is undefined.");
+      }
+    } catch (error: any) {
+      alert(error.message);
     }
   };
+  if (error) alert("Try again!");
+  
+  useEffect(() => {}, [error]);
 
   return (
     <div className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-white dark:bg-black">
-      <h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
-        Schedule Live Class
-      </h2>
+      <h1 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
+        Welcome back to learn skill!
+      </h1>
 
-      <form className="my-8" onSubmit={handleSubmit}>
-        <div className="flex flex-col space-y-4 mb-4">
-          <LabelInputContainer>
-            <Label htmlFor="order">Order</Label>
-            <Input
-              id="order"
-              name="order"
-              placeholder="1"
-              type="text"
-              value={formData.order}
-              onChange={handleInputChange}
-            />
-            {formErrors.order && (
-              <p className="text-red-500 text-sm">{formErrors.order}</p>
-            )}
-          </LabelInputContainer>
-          <LabelInputContainer>
-            <Label htmlFor="title">Title</Label>
-            <Input
-              id="title"
-              name="title"
-              placeholder="Learn Figma in 3 hr"
-              type="text"
-              value={formData.title}
-              onChange={handleInputChange}
-            />
-            {formErrors.title && (
-              <p className="text-red-500 text-sm">{formErrors.title}</p>
-            )}
-          </LabelInputContainer>
-          <LabelInputContainer>
-            <Label htmlFor="description">Description</Label>
-            <Input
-              id="description"
-              name="description"
-              placeholder="How you will learn to play around with text fonts"
-              type="text"
-              value={formData.description}
-              onChange={handleInputChange}
-            />
-            {formErrors.description && (
-              <p className="text-red-500 text-sm">{formErrors.description}</p>
-            )}
-          </LabelInputContainer>
-        </div>
-
-        <div className="flex flex-row space-x-2 mb-4">
-          <LabelInputContainer className="w-1/2">
-            <Label htmlFor="date">Date</Label>
-            <Input
-              id="date"
-              name="date"
-              placeholder="12/12/12"
-              type="date"
-              value={formData.date}
-              onChange={handleInputChange}
-            />
-            {formErrors.date && (
-              <p className="text-red-500 text-sm">{formErrors.date}</p>
-            )}
-          </LabelInputContainer>
-          <LabelInputContainer className="w-1/2">
-            <Label htmlFor="time">Time</Label>
-            <Input
-              id="time"
-              name="time"
-              placeholder="12:00"
-              type="time"
-              value={formData.time}
-              onChange={handleInputChange}
-            />
-            {formErrors.time && (
-              <p className="text-red-500 text-sm">{formErrors.time}</p>
-            )}
-          </LabelInputContainer>
-        </div>
+      <form className="my-8" onSubmit={handleLogin}>
+        <LabelInputContainer className="mb-4">
+          <Label htmlFor="email">Email Address</Label>
+          <Input
+            onChange={handleInputChange}
+            id="email"
+            placeholder="projectmayhem@fc.com"
+            type="email"
+          />
+        </LabelInputContainer>
+        <LabelInputContainer className="mb-4">
+          <Label htmlFor="password">Password</Label>
+          <Input
+            onChange={handleInputChange}
+            id="password"
+            placeholder="••••••••"
+            type="password"
+          />
+        </LabelInputContainer>
 
         <button
-          className="relative py-3 w-full text-sm rounded-md border dark:border-neutral-700 text-neutral-900 dark:text-white bg-neutral-100 dark:bg-neutral-900 font-medium hover:bg-transparent hover:text-black dark:hover:text-white hover:border-neutral-900 dark:hover:border-neutral-600 transition-all flex justify-center items-center group/btn shadow-button dark:shadow-button-dark"
+          className="bg-gradient-to-br relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
           type="submit"
-          onClick={handleClick}
         >
-          Schedule &rarr;
+          Login &rarr;
           <BottomGradient />
         </button>
+
+        <div className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent my-8 h-[1px] w-full" />
+
+        <div className="flex flex-col space-y-4">
+          <button
+            className=" relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50 dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)]"
+            type="submit"
+          >
+            <IconBrandGithub className="h-4 w-4 text-neutral-800 dark:text-neutral-300" />
+            <span className="text-neutral-700 dark:text-neutral-300 text-sm">
+              GitHub
+            </span>
+            <BottomGradient />
+          </button>
+          <button
+            className=" relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50 dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)]"
+            type="submit"
+          >
+            <IconBrandGoogle className="h-4 w-4 text-neutral-800 dark:text-neutral-300" />
+            <span className="text-neutral-700 dark:text-neutral-300 text-sm">
+              Google
+            </span>
+            <BottomGradient />
+          </button>
+        </div>
       </form>
     </div>
   );

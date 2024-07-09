@@ -1,8 +1,9 @@
 "use client";
 
-import { firestore } from '@/firebase/firebase';
-import { collection, getDocs, orderBy, query } from 'firebase/firestore';
+import { firestore, auth } from '@/firebase/firebase';
+import { collection, getDocs, orderBy, query, where } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
 interface Item {
   id: string;
@@ -28,18 +29,24 @@ const ItemList: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {scheduledClasses.map((item, index) => (
-            <tr
-              key={item.id}
-              className={`hover:text-blue-500 ${index % 2 === 0 ? 'bg-black-50' : 'bg-gray-900'}`}
-            >
-              <td className="px-4 py-2 text-sm text-white-700">{index + 1}</td>
-              <td className="px-4 py-2 text-sm text-white-700">{item.title}</td>
-              <td className="px-4 py-2 text-sm text-white-700">{item.description}</td>
-              <td className="px-4 py-2 text-sm text-white-700">{item.date}</td>
-              <td className="px-4 py-2 text-sm text-white-700">{item.time}</td>
+          {scheduledClasses.length === 0 ? (
+            <tr>
+              <td colSpan={5} className="px-4 py-2 text-sm text-white-700 text-center">No scheduled classes</td>
             </tr>
-          ))}
+          ) : (
+            scheduledClasses.map((item, index) => (
+              <tr
+                key={item.id}
+                className={`hover:text-blue-500 ${index % 2 === 0 ? 'bg-black-50' : 'bg-gray-900'}`}
+              >
+                <td className="px-4 py-2 text-sm text-white-700">{index + 1}</td>
+                <td className="px-4 py-2 text-sm text-white-700">{item.title}</td>
+                <td className="px-4 py-2 text-sm text-white-700">{item.description}</td>
+                <td className="px-4 py-2 text-sm text-white-700">{item.date}</td>
+                <td className="px-4 py-2 text-sm text-white-700">{item.time}</td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </div>
@@ -50,10 +57,17 @@ export default ItemList;
 
 function useGetScheduledClasses(): Item[] {
   const [classes, setClasses] = useState<Item[]>([]);
+  const [user] = useAuthState(auth);
 
   useEffect(() => {
+    if (!user) return;
+
     const getClasses = async () => {
-      const q = query(collection(firestore, "schedule-live"), orderBy("order", "asc"));
+      const q = query(
+        collection(firestore, "schedule-live"),
+        where("uid", "==", user.uid),
+        orderBy("order", "asc")
+      );
       const querySnapshot = await getDocs(q);
       const fetchedClasses: Item[] = querySnapshot.docs.map((doc) => {
         const data = doc.data();
@@ -70,7 +84,7 @@ function useGetScheduledClasses(): Item[] {
     };
 
     getClasses();
-  }, []);
+  }, [user]);
 
   return classes;
 }
