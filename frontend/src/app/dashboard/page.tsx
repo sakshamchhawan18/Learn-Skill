@@ -13,7 +13,6 @@ export default function Dashboard() {
             <CardTitle className="text-sm font-medium">
               Courses
             </CardTitle>
-            {/* Placeholder icon */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -39,7 +38,6 @@ export default function Dashboard() {
             <CardTitle className="text-sm font-medium">
               Courses
             </CardTitle>
-            {/* Placeholder icon */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -60,7 +58,6 @@ export default function Dashboard() {
             </p>
           </CardContent>
         </Card>
-        {/* Repeat similar Card components for other sections */}
       </div>
 
       <div className='grid md:grid-cols-1 sm:grid-cols-1 w-full gap-3'>
@@ -69,7 +66,6 @@ export default function Dashboard() {
             <CardTitle>Upcoming Live Class</CardTitle>
           </CardHeader>
           <CardContent className="pl-1">
-            {/* Ensure scheduledClasses is passed correctly to ItemList */}
             <ItemList />
           </CardContent>
         </Card>

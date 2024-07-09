@@ -14,7 +14,7 @@ interface Item {
 }
 
 const ItemList: React.FC = () => {
-  const scheduledClasses = useGetScheduledClasses();
+  const { scheduledClasses, loading } = useGetScheduledClasses();
 
   return (
     <div className="overflow-x-auto p-4">
@@ -29,7 +29,11 @@ const ItemList: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {scheduledClasses.length === 0 ? (
+          {loading ? (
+            <tr>
+              <td colSpan={5} className="px-4 py-2 text-sm text-white-700 text-center">Loading...</td>
+            </tr>
+          ) : scheduledClasses.length === 0 ? (
             <tr>
               <td colSpan={5} className="px-4 py-2 text-sm text-white-700 text-center">No scheduled classes</td>
             </tr>
@@ -55,14 +59,19 @@ const ItemList: React.FC = () => {
 
 export default ItemList;
 
-function useGetScheduledClasses(): Item[] {
+function useGetScheduledClasses(): { scheduledClasses: Item[], loading: boolean } {
   const [classes, setClasses] = useState<Item[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   const [user] = useAuthState(auth);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      setLoading(false);
+      return;
+    }
 
     const getClasses = async () => {
+      setLoading(true);
       const q = query(
         collection(firestore, "schedule-live"),
         where("uid", "==", user.uid),
@@ -81,10 +90,11 @@ function useGetScheduledClasses(): Item[] {
       });
 
       setClasses(fetchedClasses);
+      setLoading(false);
     };
 
     getClasses();
   }, [user]);
 
-  return classes;
+  return { scheduledClasses: classes, loading };
 }
