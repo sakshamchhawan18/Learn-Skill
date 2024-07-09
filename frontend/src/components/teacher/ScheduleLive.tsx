@@ -15,22 +15,21 @@ export function ScheduleLive() {
   const handleClick = () => {};
 
   const [formData, setFormData] = useState({
-    id: "",
-    title: "",
-    description: "",
-    date: "",
-    time: "",
-    order: "",
-    thumbnail: null as File | null,
-  });
-
-  const [formErrors, setFormErrors] = useState({
-    id: "",
+    id: uuidv4(),
     title: "",
     description: "",
     date: "",
     time: "",
     order: "0",
+    thumbnail: null as File | null,
+  });
+
+  const [formErrors, setFormErrors] = useState({
+    title: "",
+    description: "",
+    date: "",
+    time: "",
+    order: "",
     thumbnail: "",
   });
 
@@ -55,6 +54,8 @@ export function ScheduleLive() {
       description: formData.description ? "" : "Description is required.",
       date: formData.date ? "" : "Date is required.",
       time: formData.time ? "" : "Time is required.",
+      order: formData.order ? "" : "Order is required.",
+      thumbnail: "", // Assuming no validation for thumbnail, otherwise add validation here
     };
 
     const currentDate = new Date();
@@ -81,17 +82,12 @@ export function ScheduleLive() {
       console.log("Form submitted", formData);
       router.push("/dashboard");
 
-      const formDataToSubmit = new FormData();
-      formDataToSubmit.append("title", formData.title);
-      formDataToSubmit.append("description", formData.description);
-      formDataToSubmit.append("date", formData.date);
-      formDataToSubmit.append("time", formData.time);
-
       const uniqueId = uuidv4();
       const docId = `${formData.title}-${uniqueId}`;
       const newOrder = { ...formData, id: docId, order: Number(formData.order) };
+
       await setDoc(doc(firestore, "schedule-live", docId), newOrder);
-      alert("saved");
+      alert("Saved successfully!");
     }
   };
 
@@ -103,7 +99,7 @@ export function ScheduleLive() {
 
       <form className="my-8" onSubmit={handleSubmit}>
         <div className="flex flex-col space-y-4 mb-4">
-        <LabelInputContainer>
+          <LabelInputContainer>
             <Label htmlFor="order">Order</Label>
             <Input
               id="order"
@@ -113,8 +109,8 @@ export function ScheduleLive() {
               value={formData.order}
               onChange={handleInputChange}
             />
-            {formErrors.title && (
-              <p className="text-red-500 text-sm">{formErrors.title}</p>
+            {formErrors.order && (
+              <p className="text-red-500 text-sm">{formErrors.order}</p>
             )}
           </LabelInputContainer>
           <LabelInputContainer>
