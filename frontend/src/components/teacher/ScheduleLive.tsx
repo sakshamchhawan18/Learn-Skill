@@ -1,7 +1,5 @@
 "use client";
 import React, { useState } from "react";
-
-import { cn } from "@/utils/cn";
 import { useRouter } from "next/navigation";
 import { useAuthState } from "react-firebase-hooks/auth";
 import Image from "next/image";
@@ -10,14 +8,33 @@ import { doc, setDoc } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
+import { cn } from "@/utils/cn";
+
+interface FormData {
+  id: string;
+  uid: string;
+  title: string;
+  description: string;
+  date: string;
+  time: string;
+  order: number;
+  thumbnail: File | null;
+}
+
+interface FormErrors {
+  title: string;
+  description: string;
+  date: string;
+  time: string;
+  order: string;
+  thumbnail: string;
+}
 
 export function ScheduleLive() {
   const router = useRouter();
   const [user] = useAuthState(auth); // Get the authenticated user
 
-  const handleClick = () => {};
-
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     id: "",
     uid: "",
     title: "",
@@ -25,17 +42,15 @@ export function ScheduleLive() {
     date: "",
     time: "",
     order: 0,
-    thumbnail: null as File | null,
+    thumbnail: null,
   });
 
-  const [formErrors, setFormErrors] = useState({
-    id: "",
-    uid: "",
+  const [formErrors, setFormErrors] = useState<FormErrors>({
     title: "",
     description: "",
     date: "",
     time: "",
-    order: 0,
+    order: "",
     thumbnail: "",
   });
 
@@ -55,11 +70,13 @@ export function ScheduleLive() {
   };
 
   const validateForm = () => {
-    const errors = {
+    const errors: FormErrors = {
       title: formData.title ? "" : "Title is required.",
       description: formData.description ? "" : "Description is required.",
       date: formData.date ? "" : "Date is required.",
       time: formData.time ? "" : "Time is required.",
+      order: formData.order ? "" : "Order is required.",
+      thumbnail: formData.thumbnail ? "" : "Thumbnail is required.",
     };
 
     const currentDate = new Date();
@@ -169,10 +186,43 @@ export function ScheduleLive() {
           </LabelInputContainer>
         </div>
 
+        <LabelInputContainer>
+          <Label htmlFor="order">Order</Label>
+          <Input
+            id="order"
+            name="order"
+            placeholder="1"
+            type="number"
+            value={formData.order.toString()}
+            onChange={handleInputChange}
+          />
+          {formErrors.order && (
+            <p className="text-red-500 text-sm">{formErrors.order}</p>
+          )}
+        </LabelInputContainer>
+
+        <LabelInputContainer>
+          <Label htmlFor="thumbnail">Thumbnail</Label>
+          <Input
+            id="thumbnail"
+            name="thumbnail"
+            type="file"
+            accept="image/*"
+            onChange={handleInputChange}
+          />
+          {formErrors.thumbnail && (
+            <p className="text-red-500 text-sm">{formErrors.thumbnail}</p>
+          )}
+          {preview && (
+            <div className="mt-2">
+              <Image src={preview} alt="Thumbnail Preview" width={100} height={100} />
+            </div>
+          )}
+        </LabelInputContainer>
+
         <button
           className="relative py-3 w-full text-sm rounded-md border dark:border-neutral-700 text-neutral-900 dark:text-white bg-neutral-100 dark:bg-neutral-900 font-medium hover:bg-transparent hover:text-black dark:hover:text-white hover:border-neutral-900 dark:hover:border-neutral-600 transition-all flex justify-center items-center group/btn shadow-button dark:shadow-button-dark"
           type="submit"
-          onClick={handleClick}
         >
           Schedule &rarr;
           <BottomGradient />
