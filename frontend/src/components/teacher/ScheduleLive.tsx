@@ -17,7 +17,6 @@ export function ScheduleLive() {
   const handleClick = () => {};
 
   const [formData, setFormData] = useState({
-<<<<<<< HEAD
     id: "",
     uid: "",
     title: "",
@@ -31,27 +30,11 @@ export function ScheduleLive() {
   const [formErrors, setFormErrors] = useState({
     id: "",
     uid: "",
-=======
-    id: uuidv4(),
->>>>>>> 58278537dc1bef473d13c4779304a1048f6bb64a
     title: "",
     description: "",
     date: "",
     time: "",
-<<<<<<< HEAD
     order: 0,
-=======
-    order: "0",
-    thumbnail: null as File | null,
-  });
-
-  const [formErrors, setFormErrors] = useState({
-    title: "",
-    description: "",
-    date: "",
-    time: "",
-    order: "",
->>>>>>> 58278537dc1bef473d13c4779304a1048f6bb64a
     thumbnail: "",
   });
 
@@ -76,8 +59,6 @@ export function ScheduleLive() {
       description: formData.description ? "" : "Description is required.",
       date: formData.date ? "" : "Date is required.",
       time: formData.time ? "" : "Time is required.",
-      order: formData.order ? "" : "Order is required.",
-      thumbnail: "", // Assuming no validation for thumbnail, otherwise add validation here
     };
 
     const currentDate = new Date();
@@ -102,7 +83,6 @@ export function ScheduleLive() {
     e.preventDefault();
     if (validateForm()) {
       console.log("Form submitted", formData);
-<<<<<<< HEAD
 
       const uniqueId = uuidv4();
       const docId = `${formData.title}-${uniqueId}`;
@@ -116,16 +96,6 @@ export function ScheduleLive() {
       await setDoc(doc(firestore, "schedule-live", docId), newOrder);
       alert("Class scheduled successfully!");
       router.push("/dashboard");
-=======
-      router.push("/dashboard");
-
-      const uniqueId = uuidv4();
-      const docId = `${formData.title}-${uniqueId}`;
-      const newOrder = { ...formData, id: docId, order: Number(formData.order) };
-
-      await setDoc(doc(firestore, "schedule-live", docId), newOrder);
-      alert("Saved successfully!");
->>>>>>> 58278537dc1bef473d13c4779304a1048f6bb64a
     }
   };
 
@@ -137,23 +107,6 @@ export function ScheduleLive() {
 
       <form className="my-8" onSubmit={handleSubmit}>
         <div className="flex flex-col space-y-4 mb-4">
-<<<<<<< HEAD
-=======
-          <LabelInputContainer>
-            <Label htmlFor="order">Order</Label>
-            <Input
-              id="order"
-              name="order"
-              placeholder="1"
-              type="text"
-              value={formData.order}
-              onChange={handleInputChange}
-            />
-            {formErrors.order && (
-              <p className="text-red-500 text-sm">{formErrors.order}</p>
-            )}
-          </LabelInputContainer>
->>>>>>> 58278537dc1bef473d13c4779304a1048f6bb64a
           <LabelInputContainer>
             <Label htmlFor="title">Title</Label>
             <Input

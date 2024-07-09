@@ -49,7 +49,7 @@ export function Login() {
       }
     } catch (error: any) {
       setLoginError(true); // Set login error state to true
-      console.error("Login error:", error);
+      // console.error("Login error:", error);
     }
   };
 
