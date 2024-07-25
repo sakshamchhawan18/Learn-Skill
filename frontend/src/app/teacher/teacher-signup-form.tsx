@@ -74,7 +74,7 @@ export function SignupFormDemo() {
         userType: "teacher",
       };
       await setDoc(doc(firestore, "users", newUser.user.uid), userData);
-      router.push("/dashboard");
+      router.push("/dashboard-teacher");
     } catch (error: any) {
       console.error("Error creating user:", error.message);
       alert("Error creating user. Please try again.");

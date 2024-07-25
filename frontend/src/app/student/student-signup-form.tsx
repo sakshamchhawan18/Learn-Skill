@@ -2,8 +2,8 @@
 
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import React, { useState } from "react";
-import { Label } from "./ui/label";
-import { Input } from "./ui/input";
+import { Label } from "@/components/ui/label"; // Ensure correct import path
+import { Input } from "@/components/ui/input"; // Ensure correct import path
 import { cn } from "@/utils/cn";
 import { IconBrandGithub, IconBrandGoogle } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
@@ -60,7 +60,7 @@ export function SignupFormDemo() {
     try {
       const newUser = await createUserWithEmailAndPassword(
         inputs.email,
-        inputs.password 
+        inputs.password
       );
       if (!newUser) return;
 
@@ -74,10 +74,10 @@ export function SignupFormDemo() {
         userType: "student",
       };
       await setDoc(doc(firestore, "users", newUser.user.uid), userData);
-      router.push("/dashboard");
+      router.push("/dashboard-student");
     } catch (error: any) {
       console.error("Error creating user:", error.message);
-      alert(error.message);
+      alert("Error creating user. Please try again.");
     }
   };
 

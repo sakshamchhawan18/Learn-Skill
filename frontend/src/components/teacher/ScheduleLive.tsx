@@ -76,17 +76,23 @@ export function ScheduleLive() {
       date: formData.date ? "" : "Date is required.",
       time: formData.time ? "" : "Time is required.",
       order: formData.order ? "" : "Order is required.",
-      thumbnail: formData.thumbnail ? "" : "Thumbnail is required.",
+      // thumbnail: formData.thumbnail ? "" : "Thumbnail is required.",
     };
 
     const currentDate = new Date();
     const selectedDate = new Date(formData.date);
 
-    if (formData.date && selectedDate.getTime() < currentDate.setHours(0, 0, 0, 0)) {
+    if (
+      formData.date &&
+      selectedDate.getTime() < currentDate.setHours(0, 0, 0, 0)
+    ) {
       errors.date = "Date cannot be in the past.";
     }
 
-    if (formData.date && selectedDate.toDateString() === currentDate.toDateString()) {
+    if (
+      formData.date &&
+      selectedDate.toDateString() === currentDate.toDateString()
+    ) {
       const currentTime = currentDate.toTimeString().slice(0, 5);
       if (formData.time && formData.time < currentTime) {
         errors.time = "Time cannot be in the past.";
@@ -113,7 +119,7 @@ export function ScheduleLive() {
 
       await setDoc(doc(firestore, "schedule-live", docId), newOrder);
       alert("Class scheduled successfully!");
-      router.push("/dashboard");
+      router.push("/dashboard-teacher");
     }
   };
 
@@ -198,10 +204,10 @@ export function ScheduleLive() {
           />
           {formErrors.order && (
             <p className="text-red-500 text-sm">{formErrors.order}</p>
-          )}
+          )} <br />
         </LabelInputContainer>
 
-        <LabelInputContainer>
+        {/* <LabelInputContainer>
           <Label htmlFor="thumbnail">Thumbnail</Label>
           <Input
             id="thumbnail"
@@ -218,7 +224,7 @@ export function ScheduleLive() {
               <Image src={preview} alt="Thumbnail Preview" width={100} height={100} />
             </div>
           )}
-        </LabelInputContainer>
+        </LabelInputContainer> */}
 
         <button
           className="relative py-3 w-full text-sm rounded-md border dark:border-neutral-700 text-neutral-900 dark:text-white bg-neutral-100 dark:bg-neutral-900 font-medium hover:bg-transparent hover:text-black dark:hover:text-white hover:border-neutral-900 dark:hover:border-neutral-600 transition-all flex justify-center items-center group/btn shadow-button dark:shadow-button-dark"

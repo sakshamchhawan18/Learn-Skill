@@ -41,9 +41,9 @@ export function Login() {
       const userDoc = await getDoc(doc(db, "users", newUser.user.uid));
       const userData = userDoc.data();
       if (userData?.userType === "student") {
-        router.push("/student-dashboard");
+        router.push("/dashboard-student");
       } else if (userData?.userType === "teacher") {
-        router.push("/dashboard");
+        router.push("/dashboard-teacher");
       } else {
         alert("User role is undefined.");
       }

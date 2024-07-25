@@ -3,7 +3,7 @@
 "use client";
 
 import React from 'react';
-import Sidebar from '../../app/dashboard/Sidebar';
+import Sidebar from '../../app/dashboard-teacher/Sidebar';
 
 const Dashboard = ({ children }: { children: React.ReactNode }) => {
   return (
