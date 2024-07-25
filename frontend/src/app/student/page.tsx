@@ -1,7 +1,8 @@
 import RoleSelection from "@/components/role-selection";
-import { SignupFormDemo } from "@/components/signup-form";
+
 
 import Image from "next/image";
+import { SignupFormDemo } from "./student-signup-form";
 
 export default function Home() {
   return (
