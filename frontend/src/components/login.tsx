@@ -25,7 +25,7 @@ export function Login() {
 
   const handleLogin = async (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!inputs.email || !inputs.password) {
+    if (!inputs.email || !inputs.password) {``
       return alert("Please fill all fields!");
     }
     try {
@@ -146,3 +146,4 @@ const LabelInputContainer = ({
     </div>
   );
 };
+
