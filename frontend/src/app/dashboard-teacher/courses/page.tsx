@@ -4,7 +4,6 @@ import CourseForm from '@/components/teacher/CourseForm'
 import VideoUploadForm from '@/components/teacher/VideoUploadForm'
 import { Button } from '@/components/ui/button'
 import React, { useState, useEffect } from 'react'
- // Assume this is your Firebase config
 import { collection, addDoc, updateDoc, doc, getDocs, query, where } from 'firebase/firestore'
 import { auth, db } from '@/firebase/firebase'
 
@@ -13,6 +12,7 @@ export default function ProjectsPage() {
   const [showCourseForm, setShowCourseForm] = useState(false)
   const [selectedCourse, setSelectedCourse] = useState(null)
   const [userId, setUserId] = useState(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -22,6 +22,7 @@ export default function ProjectsPage() {
       } else {
         setUserId(null)
         setCourses([])
+        setLoading(false)
       }
     })
 
@@ -29,10 +30,16 @@ export default function ProjectsPage() {
   }, [])
 
   const fetchCourses = async (uid) => {
-    const q = query(collection(db, "courses"), where("userId", "==", uid))
-    const querySnapshot = await getDocs(q)
-    const fetchedCourses = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
-    setCourses(fetchedCourses)
+    try {
+      const q = query(collection(db, "courses"), where("userId", "==", uid))
+      const querySnapshot = await getDocs(q)
+      const fetchedCourses = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+      setCourses(fetchedCourses)
+    } catch (error) {
+      console.error("Error fetching courses: ", error)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleAddCourse = async (newCourse) => {
@@ -73,6 +80,14 @@ export default function ProjectsPage() {
     } catch (error) {
       console.error("Error adding video: ", error)
     }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex flex-1 items-center justify-center min-h-[90vh]">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
+      </div>
+    );
   }
 
   return (
