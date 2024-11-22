@@ -1,7 +1,19 @@
 import React from 'react'
 import { Button } from '@/components/ui/button'
 
-export default function CourseCard({ course, onAddVideo }) {
+interface Course {
+  id: string;
+  title: string;
+  description: string;
+  videos: { title: string }[];
+}
+
+interface CourseCardProps {
+  course: Course;
+  onAddVideo: (courseId: string) => void;
+}
+
+export default function CourseCard({ course, onAddVideo }: CourseCardProps) {
   return (
     <div className="border rounded-lg p-4 shadow-sm">
       <h3 className="text-xl font-semibold mb-2">{course.title}</h3>
