@@ -131,7 +131,11 @@ function useGetScheduledClasses(): { scheduledClasses: Item[], loading: boolean,
         setClasses(allClasses);
       } catch (err) {
         console.error('Error fetching scheduled classes:', err);
-        setError(err.message);
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError('An unknown error occurred');
+        }
       } finally {
         setLoading(false);
       }
