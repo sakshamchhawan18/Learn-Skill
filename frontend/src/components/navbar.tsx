@@ -51,7 +51,7 @@ function Navbar({ className }: { className?: string }) {
             className
           )}
         >
-          <Menu setActive={setActive}>
+          {/* <Menu setActive={setActive}>
             <MenuItem setActive={setActive} active={active} item="Live">
               <div className="text-sm grid grid-cols-2 gap-10 p-4">
                 <ProductItem
@@ -98,7 +98,7 @@ function Navbar({ className }: { className?: string }) {
                 <HoveredLink href="/enterprise">Enterprise</HoveredLink>
               </div>
             </MenuItem>
-          </Menu>
+          </Menu> */}
         </div>
       </div>
     </div>
