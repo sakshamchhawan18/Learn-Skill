@@ -5,17 +5,17 @@ import { collection, query, where, getDocs, doc, getDoc } from "firebase/firesto
 import { onAuthStateChanged, User } from "firebase/auth";
 
 export default function ProjectsPage() {
-  const [enrolledTeachers, setEnrolledTeachers] = useState<string[]>([]); // Array of strings for teacher IDs
+  const [user, setUser] = useState<User | null>(null); // Add state for the current user
+  const [enrolledTeachers, setEnrolledTeachers] = useState<string[]>([]);
   const [offlineCourses, setOfflineCourses] = useState<
     { id: string; title: string; description: string }[]
-  >([]); // Array of course objects
+  >([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null); // Error can be a string or null
-  const [user, setUser] = useState<User | null>(null); // User from Firebase or null
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
+      setUser(currentUser); // Update the state with the current user
       if (currentUser) {
         fetchEnrolledTeachers(currentUser.uid);
       } else {
@@ -24,7 +24,6 @@ export default function ProjectsPage() {
       }
     });
 
-    // Cleanup subscription on unmount
     return () => unsubscribe();
   }, []);
 

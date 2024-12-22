@@ -1,18 +1,37 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import Link from 'next/link';
-import { ArrowUpRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import ItemList from './components/ItemList';
+"use client";
+
+import { useEffect, useState } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import ItemList from "./components/ItemList";
+import Loader from "@/components/ui/loader";
 
 export default function Dashboard() {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1500); 
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader />
+      </div>
+    );
+  }
+
   return (
-    <div className='flex flex-col justify-center items-start flex-wrap px-4 pt-4 gap-4'>
-      <div className='flex flex-row justify-center items-start flex-wrap px-4 pt-4 gap-4'>
-        <Card className='w-[20rem]'>
+    <div className="flex flex-col justify-center items-start flex-wrap px-4 pt-4 gap-4">
+      <div className="flex flex-row justify-center items-start flex-wrap px-4 pt-4 gap-4">
+        <Card className="w-[20rem]">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Courses
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Courses</CardTitle>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -28,16 +47,12 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">100</div>
-            <p className="text-xs text-muted-foreground">
-              Placeholder for dynamic content
-            </p>
+            <p className="text-xs text-muted-foreground">Placeholder for dynamic content</p>
           </CardContent>
         </Card>
-        <Card className='w-[20rem]'>
+        <Card className="w-[20rem]">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Courses
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Courses</CardTitle>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -53,14 +68,12 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">100</div>
-            <p className="text-xs text-muted-foreground">
-              Placeholder for dynamic content
-            </p>
+            <p className="text-xs text-muted-foreground">Placeholder for dynamic content</p>
           </CardContent>
         </Card>
       </div>
 
-      <div className='grid md:grid-cols-1 sm:grid-cols-1 w-full gap-3'>
+      <div className="grid md:grid-cols-1 sm:grid-cols-1 w-full gap-3">
         <Card className="">
           <CardHeader>
             <CardTitle>Upcoming Live Class</CardTitle>
@@ -69,7 +82,7 @@ export default function Dashboard() {
             <ItemList />
           </CardContent>
         </Card>
-        <br/>
+        <br />
         <Card className="">
           <CardHeader className="flex flex-row items-center">
             <div className="grid gap-2">
@@ -86,7 +99,7 @@ export default function Dashboard() {
             </Button>
           </CardHeader>
           <CardContent>
-            <div style={{ maxHeight: '320px', overflowY: 'auto' }}>
+            <div style={{ maxHeight: "320px", overflowY: "auto" }}>
               <main className="flex flex-col gap-2 lg:gap-2 h-[300px] w-full">
                 <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
                   <div className="flex flex-col items-center text-center">

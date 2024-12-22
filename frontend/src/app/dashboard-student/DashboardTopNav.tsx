@@ -49,7 +49,7 @@ export default function DashboardTopNav({ children }: { children: ReactNode }) {
               <DialogClose asChild>
                 <Link href="/dashboard/kanban">
                   <Button variant="outline" className="w-full">
-                    <FaTasks className="mr-2 h-4 w-4" />
+                    <FaTasks />
                     Kanban
                   </Button>
                 </Link>

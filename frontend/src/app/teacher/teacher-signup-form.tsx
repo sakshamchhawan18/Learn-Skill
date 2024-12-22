@@ -1,6 +1,10 @@
 "use client";
 
-import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
+import {
+  useCreateUserWithEmailAndPassword,
+  useSignInWithGithub,
+  useSignInWithGoogle,
+} from "react-firebase-hooks/auth";
 import React, { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -21,6 +25,11 @@ export function SignupFormDemo() {
 
   const [createUserWithEmailAndPassword, user, loading, error] =
     useCreateUserWithEmailAndPassword(auth);
+  const [signInWithGoogle, googleUser, googleLoading, googleError] =
+    useSignInWithGoogle(auth);
+  const [signInWithGithub, githubUser, githubLoading, githubError] =
+    useSignInWithGithub(auth);
+
   const router = useRouter();
 
   const [formErrors, setFormErrors] = useState({
@@ -78,6 +87,34 @@ export function SignupFormDemo() {
     } catch (error: any) {
       console.error("Error creating user:", error.message);
       alert("Error creating user. Please try again.");
+    }
+  };
+
+  const handleOAuthSignIn = async (provider: "google" | "github") => {
+    try {
+      const userCredential =
+        provider === "google" ? await signInWithGoogle() : await signInWithGithub();
+
+      if (!userCredential) return;
+
+      const { user } = userCredential;
+      const userDocRef = doc(firestore, "users", user.uid);
+
+      const userData = {
+        uid: user.uid,
+        email: user.email,
+        firstname: user.displayName?.split(" ")[0] || "FirstName",
+        lastname: user.displayName?.split(" ")[1] || "LastName",
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        userType: "teacher",
+      };
+
+      await setDoc(userDocRef, userData, { merge: true });
+      router.push("/dashboard-teacher");
+    } catch (error: any) {
+      console.error(`Error signing in with ${provider}:`, error.message);
+      alert(`Error signing in with ${provider}. Please try again.`);
     }
   };
 
@@ -154,7 +191,8 @@ export function SignupFormDemo() {
         <div className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent my-8 h-[1px] w-full" />
 
         <div className="flex flex-col space-y-4">
-          <button
+          {/* <button
+            onClick={() => handleOAuthSignIn("github")}
             className="relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50 dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)]"
             type="button"
           >
@@ -163,8 +201,9 @@ export function SignupFormDemo() {
               GitHub
             </span>
             <BottomGradient />
-          </button>
+          </button> */}
           <button
+            onClick={() => handleOAuthSignIn("google")}
             className="relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50 dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)]"
             type="button"
           >
